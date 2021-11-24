@@ -53,6 +53,9 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.useraccount.UserAccountManager;
 
+/**
+ * 大疆这群工程师真是够可以的，开源的demo居然没注释，我只能呵呵
+ */
 public class Waypoint1Activity extends FragmentActivity implements View.OnClickListener, OnMapClickListener {
 
     protected static final String TAG = "Waypoint1Activity";
