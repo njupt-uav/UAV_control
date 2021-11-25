@@ -248,6 +248,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    /**
+     * addListener()方法
+     * 添加 WaypointMissionOperatorListener
+     */
     //Add Listener for WaypointMissionOperator
     private void addListener() {
         if (getWaypointMissionOperator() != null) {
@@ -255,6 +259,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    /**
+     * removeListener()方法
+     * 删除 WaypointMissionOperatorListener
+     */
     private void removeListener() {
         if (getWaypointMissionOperator() != null) {
             getWaypointMissionOperator().removeListener(eventNotificationListener);
@@ -282,12 +290,22 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
         }
 
+        /**
+         * onExecutionFinish() 方法
+         * 在任务执行完成时显示一条消息通知用户。
+         * @param error
+         */
         @Override
         public void onExecutionFinish(@Nullable final DJIError error) {
             setResultToToast("Execution finished: " + (error == null ? "Success!" : error.getDescription()));
         }
     };
 
+    /**
+     * getWaypointMissionOperator() 方法
+     * 获取了 WaypointMissionOperator 实例;使用for循环在 waypointMissionBuilder 的中设置每个DJIWaypoint的高度。
+     * @return
+     */
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
             instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
@@ -440,6 +458,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     /**
      * showSettingDialog() 方法
      * 显示 Waypoint Configuration 警报对话框，并在按下 Config 按钮时重写 onClick() 方法显示配置对话框。
+     * 根据用户选择的项目将不同的值传递给 mSpeed， mFinishedAction 和 mHeadingMode 变量。
      */
     private void showSettingDialog(){
         LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
@@ -470,13 +489,13 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d(TAG, "Select finish action");
                 if (checkedId == R.id.finishNone){
-                    mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
+                    mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;//任务完成将不会采取进一步的行动。
                 } else if (checkedId == R.id.finishGoHome){
-                    mFinishedAction = WaypointMissionFinishedAction.GO_HOME;
+                    mFinishedAction = WaypointMissionFinishedAction.GO_HOME;//完成任务后，飞机将返回返航点。
                 } else if (checkedId == R.id.finishAutoLanding){
-                    mFinishedAction = WaypointMissionFinishedAction.AUTO_LAND;
+                    mFinishedAction = WaypointMissionFinishedAction.AUTO_LAND;//飞机将在最后一个航点自动降落。
                 } else if (checkedId == R.id.finishToFirst){
-                    mFinishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT;
+                    mFinishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT;//飞机将返回其第一个航点并悬停就位。
                 }
             }
         });
@@ -488,13 +507,13 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 Log.d(TAG, "Select heading");
 
                 if (checkedId == R.id.headingNext) {
-                    mHeadingMode = WaypointMissionHeadingMode.AUTO;
+                    mHeadingMode = WaypointMissionHeadingMode.AUTO;//任务完成将不会采取进一步的行动。
                 } else if (checkedId == R.id.headingInitDirec) {
-                    mHeadingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION;
+                    mHeadingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION;//飞机的航向将由遥控器控制。
                 } else if (checkedId == R.id.headingRC) {
-                    mHeadingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER;
+                    mHeadingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER;//飞机的航向将由遥控器控制。
                 } else if (checkedId == R.id.headingWP) {
-                    mHeadingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING;
+                    mHeadingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING;//飞机的航向将由遥控器控制。
                 }
             }
         });
@@ -539,6 +558,11 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return true;
     }
 
+    /**
+     * configWayPointMission() 方法
+     * 检查了 waypointMissionBuilder 是否为null并设置了 WaypointMission.Builder 的 finishedAction， headingMode， autoFlightSpeed， maxFlightSpeed 和 flightPathMode 变量。
+     * 调用WaypointMissionOperator的 loadMission() 方法，并将 waypointMissionBuilder.build() 作为参数传递给WaypointMissionOperator加载航点任务。
+     */
     private void configWayPointMission(){
 
         if (waypointMissionBuilder == null){
