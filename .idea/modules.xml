@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GSDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/GSDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AMap_2DMap_V2.8.1_20160202/GSDemo.AMap_2DMap_V2.8.1_20160202.iml" filepath="$PROJECT_DIR$/.idea/modules/AMap_2DMap_V2.8.1_20160202/GSDemo.AMap_2DMap_V2.8.1_20160202.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AMap_Search_V3.2.1_20160308/GSDemo.AMap_Search_V3.2.1_20160308.iml" filepath="$PROJECT_DIR$/.idea/modules/AMap_Search_V3.2.1_20160308/GSDemo.AMap_Search_V3.2.1_20160308.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GSDemo.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GSDemo.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/UAV_control.iml" filepath="$PROJECT_DIR$/.idea/modules/UAV_control.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AMap_2DMap_V2.8.1_20160202/UAV_control.AMap_2DMap_V2.8.1_20160202.iml" filepath="$PROJECT_DIR$/.idea/modules/AMap_2DMap_V2.8.1_20160202/UAV_control.AMap_2DMap_V2.8.1_20160202.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AMap_Search_V3.2.1_20160308/UAV_control.AMap_Search_V3.2.1_20160308.iml" filepath="$PROJECT_DIR$/.idea/modules/AMap_Search_V3.2.1_20160308/UAV_control.AMap_Search_V3.2.1_20160308.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/UAV_control.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/UAV_control.app.iml" />
     </modules>
   </component>
 </project>
