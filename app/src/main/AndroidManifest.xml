@@ -51,6 +51,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
         <!--
+        123
           ADD API_KEY HERE and make sure you
           are connected to the Internet before
           the app is launched
