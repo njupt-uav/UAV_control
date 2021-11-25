@@ -54,7 +54,8 @@ import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.useraccount.UserAccountManager;
 
 /**
- * 大疆这群工程师真是够可以的，开源的demo居然没注释，我只能呵呵
+ *
+ *
  */
 public class Waypoint1Activity extends FragmentActivity implements View.OnClickListener, OnMapClickListener {
 
@@ -118,6 +119,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
     }
 
+    /**
+     *  initUI() 方法
+     * 初始化7个Button变量，并实现它们的 setOnClickListener 方法并将 "this"(OnClickListener) 作为参数传递
+     */
     private void initUI() {
 
         locate = (Button) findViewById(R.id.locate);
@@ -138,6 +143,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    /**
+     * initMapView() 方法
+     * 创建MapView并在此处添加中国深圳的标记。 因此，加载高德地图时，您将在中国深圳看到一个蓝色别针标签。
+     */
     private void initMapView() {
 
         if (aMap == null) {
@@ -150,6 +159,11 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
     }
 
+    /**
+     * onCreate() 方法
+     * 在运行时请求多个权限，以确保当编译和目标SDK版本高于22（例如Android Marshmallow 6.0设备和API 23）时，SDK可以正常运行
+     * @param savedInstanceState key-value的形式存储数据;保存Activity的状态。
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,6 +185,12 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
+        /**
+         * onReceive() 方法
+         * 更新飞机的位置
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             onProductConnectionChange();
@@ -199,6 +219,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 });
     }
 
+    /**
+     * initFlightController() 方法
+     * 首先借助BaseProduct的 isConnected() 方法检查产品的连接状态。 初始化 mFlightController 变量，并重写 onUpdate() 方法调用 updateDroneLocation 方法。 通过使用 onUpdate() 方法，您可以从参数获取飞行控制器的当前状态。
+     */
     private void initFlightController() {
 
         BaseProduct product = DJIDemoApplication.getProductInstance();
@@ -271,6 +295,11 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return instance;
     }
 
+    /**
+     * onMapClick(LatLng point)方法
+     * 当用户点击地图视图时，将调用 onMapClick() 当用户点击“地图视图”的其他位置时，我们将创建一个 MarkerOptions 对象并为其分配 "LatLng" 对象，然后通过传递markerOptions参数在其上添加航点标记来调用Map的 addMarker() 方法。
+     * @param point
+     */
     @Override
     public void onMapClick(LatLng point) {
         if (isAdd == true){
@@ -295,6 +324,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
     }
 
+    /**
+     * updateDroneLocation() 方法
+     * 在高德地图上添加了无人机位置标记。
+     */
     // Update the drone location based on states from MCU.
     private void updateDroneLocation(){
 
@@ -327,6 +360,11 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         mMarkers.put(mMarkers.size(), marker);
     }
 
+    /**
+     * onClick()方法
+     * 实现 ADD 动作
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -373,6 +411,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    /**
+     *  camearUpdate() 方法
+     *  移动相机并将高德地图放大到无人机的位置
+     */
     private void cameraUpdate(){
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
         float zoomlevel = (float) 18.0;
@@ -381,6 +423,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    /**
+     * enableDisableAdd() 方法
+     * 实现 CLEAR 动作
+     */
     private void enableDisableAdd(){
         if (isAdd == false) {
             isAdd = true;
@@ -391,6 +437,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    /**
+     * showSettingDialog() 方法
+     * 显示 Waypoint Configuration 警报对话框，并在按下 Config 按钮时重写 onClick() 方法显示配置对话框。
+     */
     private void showSettingDialog(){
         LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
 
