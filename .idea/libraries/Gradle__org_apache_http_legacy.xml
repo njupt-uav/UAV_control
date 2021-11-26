@@ -2,6 +2,7 @@
   <library name="Gradle: org.apache.http.legacy">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../../../androidSDK/platforms/android-30/optional/org.apache.http.legacy.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-30/optional/org.apache.http.legacy.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
