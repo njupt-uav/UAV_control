@@ -1,5 +1,5 @@
 package com.dji.GSDemo.GaodeMap;
-
+//.......
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -83,17 +83,26 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
+    /*
+    初始化飞行控制器
+     */
     @Override
     protected void onResume(){
         super.onResume();
         initFlightController();
     }
 
+    /*
+    暂停函数
+     */
     @Override
     protected void onPause(){
         super.onPause();
     }
 
+    /*
+    摧毁所创建的对象
+     */
     @Override
     protected void onDestroy(){
         unregisterReceiver(mReceiver);
@@ -109,6 +118,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         this.finish();
     }
 
+    /*
+    给消息框设置值
+     */
     private void setResultToToast(final String string){
         Waypoint1Activity.this.runOnUiThread(new Runnable() {
             @Override
@@ -118,6 +130,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
     }
 
+    /*
+    初始化UI界面
+     */
     private void initUI() {
 
         locate = (Button) findViewById(R.id.locate);
@@ -138,6 +153,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+/*
+初始化地图界面
+ */
     private void initMapView() {
 
         if (aMap == null) {
@@ -150,6 +168,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
     }
 
+/*
+创建界面
+ */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +190,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         onProductConnectionChange();
     }
 
+    /*
+    可以使用它来更新飞机的位置
+     */
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
@@ -177,12 +201,18 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     };
 
+    /*
+    连接改变
+     */
     private void onProductConnectionChange()
     {
         initFlightController();
         loginAccount();
     }
 
+/*
+登录界面
+ */
     private void loginAccount(){
 
         UserAccountManager.getInstance().logIntoDJIUserAccount(this,
@@ -199,6 +229,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 });
     }
 
+/*
+初始化飞行控制器
+ */
     private void initFlightController() {
 
         BaseProduct product = DJIDemoApplication.getProductInstance();
@@ -230,7 +263,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             getWaypointMissionOperator().addListener(eventNotificationListener);
         }
     }
-
+//移除监听器
     private void removeListener() {
         if (getWaypointMissionOperator() != null) {
             getWaypointMissionOperator().removeListener(eventNotificationListener);
@@ -264,6 +297,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     };
 
+    //获得控制器
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
             instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
@@ -271,6 +305,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return instance;
     }
 
+    //地图点击事件
     @Override
     public void onMapClick(LatLng point) {
         if (isAdd == true){
@@ -290,7 +325,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             setResultToToast("Cannot Add Waypoint");
         }
     }
-
+//核对GPS参数
     public static boolean checkGpsCoordination(double latitude, double longitude) {
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
     }
@@ -318,6 +353,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
     }
 
+    //添加路径点标记
     private void markWaypoint(LatLng point){
         //Create MarkerOptions object
         MarkerOptions markerOptions = new MarkerOptions();
@@ -327,6 +363,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         mMarkers.put(mMarkers.size(), marker);
     }
 
+    //操作界面的点击事件
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -373,6 +410,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    //移动相机并将高德地图放大到无人机的位置
     private void cameraUpdate(){
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
         float zoomlevel = (float) 18.0;
@@ -380,6 +418,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         aMap.moveCamera(cu);
 
     }
+
 
     private void enableDisableAdd(){
         if (isAdd == false) {
@@ -489,6 +528,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return true;
     }
 
+    //使用config设置起飞前参数
     private void configWayPointMission(){
 
         if (waypointMissionBuilder == null){
@@ -527,6 +567,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    //上传任务
     private void uploadWayPointMission(){
 
         getWaypointMissionOperator().uploadMission(new CommonCallbacks.CompletionCallback() {
@@ -543,6 +584,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    //开始路径点任务
     private void startWaypointMission(){
 
         getWaypointMissionOperator().startMission(new CommonCallbacks.CompletionCallback() {
@@ -554,6 +596,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    //停止任务
     private void stopWaypointMission(){
 
         getWaypointMissionOperator().stopMission(new CommonCallbacks.CompletionCallback() {
