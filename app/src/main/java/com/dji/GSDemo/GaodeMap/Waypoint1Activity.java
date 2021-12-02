@@ -74,7 +74,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     private float altitude = 100.0f;
     private float mSpeed = 10.0f;
-
+    //配置基本的变量和参数
     private List<Waypoint> waypointList = new ArrayList<>();
 
     public static WaypointMission.Builder waypointMissionBuilder;
@@ -137,6 +137,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         stop.setOnClickListener(this);
 
     }
+    //为UI创建MapView和AMap变量以及7个Button成员变量，创建 initUI() 方法以初始化7个Button变量，并实现它们的 setOnClickListener 方法并将 "this" 作为参数传递。
 
     private void initMapView() {
 
@@ -168,7 +169,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         addListener();
         onProductConnectionChange();
     }
-
+/*
+ 在 onCreate() 方法中，我们在运行时请求多个权限，以确保当编译和目标SDK版本高于22
+ */
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
@@ -198,6 +201,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                     }
                 });
     }
+    //注册一个新的账户
 
     private void initFlightController() {
 
@@ -223,6 +227,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
         }
     }
+    //初始化飞行的控制
 
     //Add Listener for WaypointMissionOperator
     private void addListener() {
@@ -236,6 +241,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             getWaypointMissionOperator().removeListener(eventNotificationListener);
         }
     }
+
 
     private WaypointMissionOperatorListener eventNotificationListener = new WaypointMissionOperatorListener() {
         @Override
@@ -294,6 +300,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     public static boolean checkGpsCoordination(double latitude, double longitude) {
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
     }
+    /*
+    调用 initUI() 方法初始化UI。 调用 initMapView() 方法创建MapView并在此处添加中国深圳的标记。
+    因此，加载高德地图时，您将在中国深圳看到一个蓝色别针标签。
+     */
 
     // Update the drone location based on states from MCU.
     private void updateDroneLocation(){
@@ -326,7 +336,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         Marker marker = aMap.addMarker(markerOptions);
         mMarkers.put(mMarkers.size(), marker);
     }
-
+//创建标记路径点的方法
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -372,6 +382,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 break;
         }
     }
+    //标记各个按钮的作用，用case来做比较清晰
 
     private void cameraUpdate(){
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
@@ -411,6 +422,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                     mSpeed = 10.0f;
                 }
             }
+            //设定无人机的三种行驶速度的模式
 
         });
 
@@ -430,6 +442,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 }
             }
         });
+        //设定无人机返回的操作
 
         heading_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -448,6 +461,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 }
             }
         });
+        //设定无人机的朝向
 
         new AlertDialog.Builder(this)
                 .setTitle("")
@@ -488,7 +502,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         } catch (Exception e) {return false;}
         return true;
     }
-
+//越界报错判断
     private void configWayPointMission(){
 
         if (waypointMissionBuilder == null){
@@ -526,6 +540,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
 
     }
+    //实现showSettingDialog 方法以显示 Waypoint Configuration 警报对话框，并在按下 Config 按钮时重写 onClick() 方法显示配置对话框。
 
     private void uploadWayPointMission(){
 
@@ -553,7 +568,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
 
     }
-
+//创建开始行进的命令方法
     private void stopWaypointMission(){
 
         getWaypointMissionOperator().stopMission(new CommonCallbacks.CompletionCallback() {
@@ -564,5 +579,5 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
 
     }
-
+//创建停止行进的命令方法
 }
