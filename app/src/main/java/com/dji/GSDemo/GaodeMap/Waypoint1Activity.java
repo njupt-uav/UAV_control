@@ -1,4 +1,8 @@
 package com.dji.GSDemo.GaodeMap;
+//.......
+
+import static com.dji.GSDemo.GaodeMap.converter.CoordinateTransformUtil.transformGCJ02ToWGS84;
+import static com.dji.GSDemo.GaodeMap.converter.CoordinateTransformUtil.transformWGS84ToGCJ02;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -27,6 +31,7 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.dji.GSDemo.GaodeMap.WaypointResource.WayPointsResources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,19 +88,28 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
+    /*
+    初始化飞行控制器
+     */
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         initFlightController();
     }
 
+    /*
+    暂停函数
+     */
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
     }
 
+    /*
+    摧毁所创建的对象
+     */
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         unregisterReceiver(mReceiver);
         removeListener();
         super.onDestroy();
@@ -104,12 +118,15 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     /**
      * @Description : RETURN Button RESPONSE FUNCTION
      */
-    public void onReturn(View view){
+    public void onReturn(View view) {
         Log.d(TAG, "onReturn");
         this.finish();
     }
 
-    private void setResultToToast(final String string){
+    /*
+    给消息框设置值
+     */
+    private void setResultToToast(final String string) {
         Waypoint1Activity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -118,6 +135,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
     }
 
+    /*
+    初始化UI界面
+     */
     private void initUI() {
 
         locate = (Button) findViewById(R.id.locate);
@@ -138,6 +158,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
+    /*
+    初始化地图界面
+     */
     private void initMapView() {
 
         if (aMap == null) {
@@ -150,6 +173,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
     }
 
+    /*
+    创建界面
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +195,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         onProductConnectionChange();
     }
 
+    /*
+    可以使用它来更新飞机的位置
+     */
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
@@ -177,13 +206,18 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     };
 
-    private void onProductConnectionChange()
-    {
+    /*
+    连接改变
+     */
+    private void onProductConnectionChange() {
         initFlightController();
         loginAccount();
     }
 
-    private void loginAccount(){
+    /*
+    登录界面
+     */
+    private void loginAccount() {
 
         UserAccountManager.getInstance().logIntoDJIUserAccount(this,
                 new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
@@ -191,6 +225,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                     public void onSuccess(final UserAccountState userAccountState) {
                         Log.e(TAG, "Login Success");
                     }
+
                     @Override
                     public void onFailure(DJIError error) {
                         setResultToToast("Login Error:"
@@ -199,6 +234,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 });
     }
 
+    /*
+    初始化飞行控制器
+     */
     private void initFlightController() {
 
         BaseProduct product = DJIDemoApplication.getProductInstance();
@@ -231,6 +269,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    //移除监听器
     private void removeListener() {
         if (getWaypointMissionOperator() != null) {
             getWaypointMissionOperator().removeListener(eventNotificationListener);
@@ -264,6 +303,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     };
 
+    //获得控制器
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
             instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
@@ -271,34 +311,37 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         return instance;
     }
 
+    //地图点击事件
     @Override
     public void onMapClick(LatLng point) {
-        if (isAdd == true){
+        if (isAdd) {
             markWaypoint(point);
-            Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
+            double[] pointAfterRevert = transformGCJ02ToWGS84(point.longitude, point.latitude);
+            Waypoint mWaypoint = new Waypoint(pointAfterRevert[1], pointAfterRevert[0], altitude);
             //Add Waypoints to Waypoint arraylist;
             if (waypointMissionBuilder != null) {
                 waypointList.add(mWaypoint);
                 waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
-            }else
-            {
+            } else {
                 waypointMissionBuilder = new WaypointMission.Builder();
                 waypointList.add(mWaypoint);
                 waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
             }
-        }else{
+        } else {
             setResultToToast("Cannot Add Waypoint");
         }
     }
 
+    //核对GPS参数
     public static boolean checkGpsCoordination(double latitude, double longitude) {
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
     }
 
     // Update the drone location based on states from MCU.
-    private void updateDroneLocation(){
+    private void updateDroneLocation() {
 
-        LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+        double[] doubles = transformWGS84ToGCJ02(droneLocationLng, droneLocationLat);
+        LatLng pos = new LatLng(doubles[1], doubles[0]);
         //Create MarkerOptions object
         final MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(pos);
@@ -318,7 +361,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         });
     }
 
-    private void markWaypoint(LatLng point){
+    //添加路径点标记
+    private void markWaypoint(LatLng point) {
         //Create MarkerOptions object
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(point);
@@ -327,15 +371,16 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         mMarkers.put(mMarkers.size(), marker);
     }
 
+    //操作界面的点击事件
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.locate:{
+            case R.id.locate: {
                 updateDroneLocation();
                 cameraUpdate(); // Locate the drone's place
                 break;
             }
-            case R.id.add:{
+            case R.id.add: {
                 enableDisableAdd();
                 break;
             }
@@ -352,19 +397,19 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 updateDroneLocation();
                 break;
             }
-            case R.id.config:{
+            case R.id.config: {
                 showSettingDialog();
                 break;
             }
-            case R.id.upload:{
+            case R.id.upload: {
                 uploadWayPointMission();
                 break;
             }
-            case R.id.start:{
+            case R.id.start: {
                 startWaypointMission();
                 break;
             }
-            case R.id.stop:{
+            case R.id.stop: {
                 stopWaypointMission();
                 break;
             }
@@ -373,41 +418,42 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
-    private void cameraUpdate(){
+    //移动相机并将高德地图放大到无人机的位置
+    private void cameraUpdate() {
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
         float zoomlevel = (float) 18.0;
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(pos, zoomlevel);
         aMap.moveCamera(cu);
-
     }
 
-    private void enableDisableAdd(){
+
+    private void enableDisableAdd() {
         if (isAdd == false) {
             isAdd = true;
             add.setText("Exit");
-        }else{
+        } else {
             isAdd = false;
             add.setText("Add");
         }
     }
 
-    private void showSettingDialog(){
-        LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
+    private void showSettingDialog() {
+        LinearLayout wayPointSettings = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
 
         final TextView wpAltitude_TV = (TextView) wayPointSettings.findViewById(R.id.altitude);
         RadioGroup speed_RG = (RadioGroup) wayPointSettings.findViewById(R.id.speed);
         RadioGroup actionAfterFinished_RG = (RadioGroup) wayPointSettings.findViewById(R.id.actionAfterFinished);
         RadioGroup heading_RG = (RadioGroup) wayPointSettings.findViewById(R.id.heading);
 
-        speed_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+        speed_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.lowSpeed){
+                if (checkedId == R.id.lowSpeed) {
                     mSpeed = 3.0f;
-                } else if (checkedId == R.id.MidSpeed){
+                } else if (checkedId == R.id.MidSpeed) {
                     mSpeed = 5.0f;
-                } else if (checkedId == R.id.HighSpeed){
+                } else if (checkedId == R.id.HighSpeed) {
                     mSpeed = 10.0f;
                 }
             }
@@ -419,13 +465,13 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d(TAG, "Select finish action");
-                if (checkedId == R.id.finishNone){
+                if (checkedId == R.id.finishNone) {
                     mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
-                } else if (checkedId == R.id.finishGoHome){
+                } else if (checkedId == R.id.finishGoHome) {
                     mFinishedAction = WaypointMissionFinishedAction.GO_HOME;
-                } else if (checkedId == R.id.finishAutoLanding){
+                } else if (checkedId == R.id.finishAutoLanding) {
                     mFinishedAction = WaypointMissionFinishedAction.AUTO_LAND;
-                } else if (checkedId == R.id.finishToFirst){
+                } else if (checkedId == R.id.finishToFirst) {
                     mFinishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT;
                 }
             }
@@ -452,15 +498,15 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         new AlertDialog.Builder(this)
                 .setTitle("")
                 .setView(wayPointSettings)
-                .setPositiveButton("Finish",new DialogInterface.OnClickListener(){
+                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         String altitudeString = wpAltitude_TV.getText().toString();
                         altitude = Integer.parseInt(nulltoIntegerDefalt(altitudeString));
-                        Log.e(TAG,"altitude "+altitude);
-                        Log.e(TAG,"speed "+mSpeed);
-                        Log.e(TAG, "mFinishedAction "+mFinishedAction);
-                        Log.e(TAG, "mHeadingMode "+mHeadingMode);
+                        Log.e(TAG, "altitude " + altitude);
+                        Log.e(TAG, "speed " + mSpeed);
+                        Log.e(TAG, "mFinishedAction " + mFinishedAction);
+                        Log.e(TAG, "mHeadingMode " + mHeadingMode);
                         configWayPointMission();
                     }
 
@@ -475,32 +521,37 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 .show();
     }
 
-    String nulltoIntegerDefalt(String value){
-        if(!isIntValue(value)) value="0";
+    String nulltoIntegerDefalt(String value) {
+        if (!isIntValue(value)) value = "0";
         return value;
     }
 
-    boolean isIntValue(String val)
-    {
+    boolean isIntValue(String val) {
         try {
-            val=val.replace(" ","");
+            val = val.replace(" ", "");
             Integer.parseInt(val);
-        } catch (Exception e) {return false;}
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
-    private void configWayPointMission(){
+    //使用config设置起飞前参数
+    private void configWayPointMission() {
+        /**
+         * 在设置起飞参数时增加航点
+         */
+        addWayPoints();
 
-        if (waypointMissionBuilder == null){
+        if (waypointMissionBuilder == null) {
 
             waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
-                                                                  .headingMode(mHeadingMode)
-                                                                  .autoFlightSpeed(mSpeed)
-                                                                  .maxFlightSpeed(mSpeed)
-                                                                  .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 
-        }else
-        {
+        } else {
             waypointMissionBuilder.finishedAction(mFinishedAction)
                     .headingMode(mHeadingMode)
                     .autoFlightSpeed(mSpeed)
@@ -509,9 +560,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
         }
 
-        if (waypointMissionBuilder.getWaypointList().size() > 0){
+        if (waypointMissionBuilder.getWaypointList().size() > 0) {
 
-            for (int i=0; i< waypointMissionBuilder.getWaypointList().size(); i++){
+            for (int i = 0; i < waypointMissionBuilder.getWaypointList().size(); i++) {
                 waypointMissionBuilder.getWaypointList().get(i).altitude = altitude;
             }
 
@@ -527,7 +578,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
-    private void uploadWayPointMission(){
+    //上传任务
+    private void uploadWayPointMission() {
 
         getWaypointMissionOperator().uploadMission(new CommonCallbacks.CompletionCallback() {
             @Override
@@ -543,7 +595,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
-    private void startWaypointMission(){
+    //开始路径点任务
+    private void startWaypointMission() {
 
         getWaypointMissionOperator().startMission(new CommonCallbacks.CompletionCallback() {
             @Override
@@ -554,7 +607,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     }
 
-    private void stopWaypointMission(){
+    //停止任务
+    private void stopWaypointMission() {
 
         getWaypointMissionOperator().stopMission(new CommonCallbacks.CompletionCallback() {
             @Override
@@ -563,6 +617,38 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             }
         });
 
+    }
+
+    /**
+     * 无视isAdd，增加一个航点
+     *
+     * @param point
+     */
+    private void addWayPoint(LatLng point) {
+        markWaypoint(point);
+        Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
+        //Add Waypoints to Waypoint arraylist;
+        if (waypointMissionBuilder != null) {
+            waypointList.add(mWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+        } else {
+            waypointMissionBuilder = new WaypointMission.Builder();
+            waypointList.add(mWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+        }
+    }
+
+    /**
+     * 批量增加航点
+     */
+    public void addWayPoints() {
+        if (!WayPointsResources.whetherRetainExistingWaypoint) {
+            waypointMissionBuilder = new WaypointMission.Builder();
+            mMarkers.clear();
+        }
+        for (LatLng point : WayPointsResources.points) {
+            addWayPoint(point);
+        }
     }
 
 }
