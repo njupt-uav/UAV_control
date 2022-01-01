@@ -354,7 +354,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                     droneMarker.remove();
                 }
 
-                if (checkGpsCoordination(droneLocationLat, droneLocationLng)) {
+                if (checkGpsCoordination(doubles[1], doubles[0])) {
                     droneMarker = aMap.addMarker(markerOptions);
                 }
             }
@@ -621,12 +621,14 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     /**
      * 无视isAdd，增加一个航点
+     * point坐标系为GCJ02
      *
      * @param point
      */
     private void addWayPoint(LatLng point) {
         markWaypoint(point);
-        Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
+        double[] pointAfterRevert = transformGCJ02ToWGS84(point.longitude, point.latitude);
+        Waypoint mWaypoint = new Waypoint(pointAfterRevert[1], pointAfterRevert[0], altitude);
         //Add Waypoints to Waypoint arraylist;
         if (waypointMissionBuilder != null) {
             waypointList.add(mWaypoint);
@@ -644,6 +646,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     public void addWayPoints() {
         if (!WayPointsResources.whetherRetainExistingWaypoint) {
             waypointMissionBuilder = new WaypointMission.Builder();
+            waypointList.clear();
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
             mMarkers.clear();
         }
         for (LatLng point : WayPointsResources.points) {

@@ -11,6 +11,7 @@ import java.util.List;
 public class WayPointsResources {
     /**
      * 用于存放需要存放的航点,有序
+     * 存入的坐标系为GCJ02
      */
     public static List<LatLng> points = new ArrayList<>();
 

@@ -2,6 +2,7 @@ package com.dji.GSDemo.GaodeMap.converter;
 
 /**
  * 提供了百度坐标（BD09）、国测局坐标（火星坐标，GCJ02）、和WGS84坐标系之间的转换
+ * 无人机GPS给到的WGS84坐标longitude、latitude如果要展示在高德地图上，就需要转换为GCJ02坐标，再去用new LatLng(lat, lng)。
  */
 public class CoordinateTransformUtil {
 
