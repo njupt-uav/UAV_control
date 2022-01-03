@@ -70,6 +70,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     private Button locate, add, clear;
     private Button config, upload, start, stop;
+    private Button autoAdd;
 
     private boolean isAdd = false;
 
@@ -147,6 +148,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         upload = (Button) findViewById(R.id.upload);
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
+        autoAdd = (Button) findViewById(R.id.autoAdd);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -155,7 +157,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         upload.setOnClickListener(this);
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
-
+        autoAdd.setOnClickListener(this);
     }
 
     /*
@@ -413,6 +415,13 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 stopWaypointMission();
                 break;
             }
+            case R.id.autoAdd: {
+                updateDroneLocation();
+                cameraUpdate(); // Locate the drone's place
+                addWayPoints();
+                showSettingDialog();
+                break;
+            }
             default:
                 break;
         }
@@ -420,7 +429,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     //移动相机并将高德地图放大到无人机的位置
     private void cameraUpdate() {
-        LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+        double[] point = transformWGS84ToGCJ02(droneLocationLng, droneLocationLat);
+        LatLng pos = new LatLng(point[1], point[0]);
         float zoomlevel = (float) 18.0;
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(pos, zoomlevel);
         aMap.moveCamera(cu);
@@ -538,11 +548,6 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     //使用config设置起飞前参数
     private void configWayPointMission() {
-        /**
-         * 在设置起飞参数时增加航点
-         */
-        addWayPoints();
-
         if (waypointMissionBuilder == null) {
 
             waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
