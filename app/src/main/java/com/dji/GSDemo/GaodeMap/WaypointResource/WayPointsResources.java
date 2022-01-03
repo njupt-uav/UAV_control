@@ -16,7 +16,13 @@ public class WayPointsResources {
     public static List<LatLng> points = new ArrayList<>();
 
     /**
-     * 是否保留手动增加的航点，如果为true，则在已有航点之后增加其他航点
+     * 是否保留手动增加的航点，如果为true，则在已有手动添加的航点之后增加其他航点
      */
-    public static boolean whetherRetainExistingWaypoint = false;
+    public static boolean whetherRetainExistingWaypoint = true;
+    static {
+//        LatLng(lat,lag)
+        points.add(new LatLng(32.114754,118.928587));
+        points.add(new LatLng(32.115052,118.928755));
+        points.add(new LatLng(32.114712,118.929070));
+    }
 }
