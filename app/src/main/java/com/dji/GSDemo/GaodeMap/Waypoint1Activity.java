@@ -70,7 +70,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     private Button locate, add, clear;
     private Button config, upload, start, stop;
-    private Button autoAdd;
+    private Button autoAdd, land;
 
     private boolean isAdd = false;
 
@@ -149,6 +149,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
         autoAdd = (Button) findViewById(R.id.autoAdd);
+        land = (Button) findViewById(R.id.land);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -158,6 +159,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
         autoAdd.setOnClickListener(this);
+        land.setOnClickListener(this);
     }
 
     /*
@@ -422,6 +424,10 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 showSettingDialog();
                 break;
             }
+            case R.id.land: {
+                land();
+                break;
+            }
             default:
                 break;
         }
@@ -659,5 +665,29 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
             addWayPoint(point);
         }
     }
+
+    /**
+     * 降落
+     */
+    private void land() {
+        if (mFlightController != null) {
+
+            mFlightController.startLanding(
+                    new CommonCallbacks.CompletionCallback() {
+                        @Override
+                        public void onResult(DJIError djiError) {
+                            if (djiError != null) {
+                                setResultToToast("land Error:"
+                                        + djiError.getDescription());
+                            } else {
+                                setResultToToast("Start Landing");
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
+
 
 }
