@@ -84,10 +84,16 @@
             android:text="autoAdd"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/land"
+            android:id="@+id/startLand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="land"
+            android:text="startLand"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/confirmLand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="confirmLand"
             android:layout_weight="1"/>
     </LinearLayout>
 

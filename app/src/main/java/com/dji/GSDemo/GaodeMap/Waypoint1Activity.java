@@ -70,7 +70,7 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
 
     private Button locate, add, clear;
     private Button config, upload, start, stop;
-    private Button autoAdd, land;
+    private Button autoAdd, startLand, confirmLand;
 
     private boolean isAdd = false;
 
@@ -149,7 +149,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
         autoAdd = (Button) findViewById(R.id.autoAdd);
-        land = (Button) findViewById(R.id.land);
+        startLand = (Button) findViewById(R.id.startLand);
+        confirmLand = (Button) findViewById(R.id.confirmLand);
+
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -159,7 +161,8 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
         autoAdd.setOnClickListener(this);
-        land.setOnClickListener(this);
+        startLand.setOnClickListener(this);
+        confirmLand.setOnClickListener(this);
     }
 
     /*
@@ -424,8 +427,12 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
                 showSettingDialog();
                 break;
             }
-            case R.id.land: {
-                land();
+            case R.id.startLand: {
+                startLand();
+                break;
+            }
+            case R.id.confirmLand: {
+                confirmLand();
                 break;
             }
             default:
@@ -667,9 +674,9 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
     }
 
     /**
-     * 降落
+     * 从高空降落到离地0.3m
      */
-    private void land() {
+    private void startLand() {
         if (mFlightController != null) {
 
             mFlightController.startLanding(
@@ -688,6 +695,24 @@ public class Waypoint1Activity extends FragmentActivity implements View.OnClickL
         }
     }
 
+    /**
+     * 无人机下降到0.3米后需要确认后再落地
+     */
+    private void confirmLand() {
+        if (mFlightController != null) {
+            mFlightController.confirmLanding(new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+                    if (djiError != null) {
+                        setResultToToast("confirm land Error:"
+                                + djiError.getDescription());
+                    } else {
+                        setResultToToast("confirm Landing");
+                    }
+                }
+            });
+        }
+    }
 
 
 }
